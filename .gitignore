@@ -1,0 +1,17 @@
+# Python stuff
+*.pyc
+*.pyx
+*__pycache__*
+
+# Binary
+bin*/
+obj/
+
+# MSVC
+.vs/
+*.db
+*.opendb
+*.user
+
+# Dependencies
+dependencies/
