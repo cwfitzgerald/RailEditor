@@ -7,14 +7,14 @@
 #include <sstream>
 #include <stdexcept>
 
-struct SDL_Context_t {
-	SDL_Window* window;
-	SDL_GLContext gl_context;
-} sdl_context;
+graphics::SDL_Context_t graphics::sdl_context;
 
 void graphics::initialize_renderer(std::size_t width, std::size_t height) {
 	graphics::initialize_sdl(width, height);
 	graphics::Shader<graphics::ShaderType::vertex> vert;
+	graphics::Shader<graphics::ShaderType::fragment> frag;
+
+	auto prog = create_shader_program(vert, frag);
 }
 
 void graphics::initialize_sdl(std::size_t width, std::size_t height) {
@@ -25,8 +25,8 @@ void graphics::initialize_sdl(std::size_t width, std::size_t height) {
 		throw std::runtime_error(error.str().c_str());
 	}
 
-	sdl_context.window = SDL_CreateWindow("LCGame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-	                                      width, height, SDL_WINDOW_OPENGL);
+	sdl_context.window = SDL_CreateWindow("LCGame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, int(width),
+	                                      int(height), SDL_WINDOW_OPENGL);
 
 	if (!sdl_context.window) {
 		std::ostringstream error;
@@ -46,7 +46,7 @@ void graphics::initialize_sdl(std::size_t width, std::size_t height) {
 	glewExperimental = GL_TRUE;
 	glewInit();
 
-	glViewport(0, 0, width, height);
+	glViewport(0, 0, GLsizei(width), GLsizei(height));
 }
 
 void graphics::destroy_renderer() {

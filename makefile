@@ -13,15 +13,15 @@ COLOR_END     := "\033[0m"
 
 ARG_WARNING := -Wall -Wextra -Wpedantic
 ARG_INCLUDE := -Idependencies/include -Isrc/RailEditor
-ARG_DEBUG   := -g -O0
-ARG_RELEASE := -O3 -flto -fwhole-program
+ARG_DEBUG   := -g -O0 -std=c++1z
+ARG_RELEASE := -O3 -flto -fwhole-program -std=c++1z
 ARG_LINK    := -Ldependencies/lib64 -lSDL2 -lGL -lGLEW
 
 DEBUG_ARGS    = $(ARG_WARNING) $(ARG_DEBUG)
 RELEASE_ARGS  = $(ARG_WARNING) $(ARG_RELEASE)
 ARGS = $(DEBUG_ARGS)
 
-MODULE_LIST   := . graphics
+MODULE_LIST   := . graphics utilities
 MODULE_OUTPUT_DEBUG := $(addprefix obj/debug/RailEditor/, $(MODULE_LIST))
 MODULE_OUTPUT_RELEASE := $(addprefix obj/release/RailEditor/, $(MODULE_LIST))
 SRC_LIST         := $(foreach mod,$(MODULE_LIST),$(wildcard src/RailEditor/$(mod)/*.cpp))

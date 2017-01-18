@@ -178,6 +178,7 @@ xcopy /Y ..\..\dependencies\lib64\SDL2.dll "$(TargetDir)SDL2.dll*"</Command>
     <ClInclude Include="graphics.hpp" />
     <ClInclude Include="graphics\internals.hpp" />
     <ClInclude Include="graphics\shaders.hpp" />
+    <ClInclude Include="utilities\meta.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="graphics\window_management.cpp" />
