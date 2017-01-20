@@ -123,6 +123,9 @@
       <Command>xcopy /Y ..\..\dependencies\lib64\glew32.dll "$(TargetDir)glew32.dll*"
 xcopy /Y ..\..\dependencies\lib64\SDL2.dll "$(TargetDir)SDL2.dll*"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>xcopy /Y graphics\shaders "$(TargetDir)shaders" /i /c </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -173,16 +176,21 @@ xcopy /Y ..\..\dependencies\lib64\SDL2.dll "$(TargetDir)SDL2.dll*"</Command>
       <Command>xcopy /Y ..\..\dependencies\lib64\glew32.dll "$(TargetDir)glew32.dll*"
 xcopy /Y ..\..\dependencies\lib64\SDL2.dll "$(TargetDir)SDL2.dll*"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>xcopy /Y graphics\shaders "$(TargetDir)shaders" /i /c </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="graphics.hpp" />
     <ClInclude Include="graphics\internals.hpp" />
     <ClInclude Include="graphics\shaders.hpp" />
+    <ClInclude Include="utilities\file.hpp" />
     <ClInclude Include="utilities\meta.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="graphics\window_management.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="utilities\file.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

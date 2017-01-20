@@ -2,8 +2,10 @@
 
 #include <GL/glew.h>
 
+#include <iostream>
 #include <memory>
 #include <sstream>
+#include <unordered_map>
 #include <string>
 #include <type_traits>
 
@@ -31,7 +33,7 @@ namespace graphics {
 		constexpr static ShaderType type = stype;
 
 		Shader() = default;
-		Shader(const char* src_ptr) : src(src_ptr), compiled(0), valid(false){};
+		Shader(const char* src_ptr) : compiled(0), src(src_ptr), valid(false){};
 		Shader(const Shader&) = delete;
 		Shader(Shader&& rhs) {
 			compiled = rhs.compiled;
@@ -112,6 +114,7 @@ namespace graphics {
 
 	class ShaderProgram {
 	  private:
+	  	std::unordered_map<std::string, GLuint> uniforms;
 		GLuint program;
 
 	  public:
@@ -127,6 +130,14 @@ namespace graphics {
 			rhs.program = 0;
 
 			return *this;
+		}
+
+		GLuint get_uniform(const std::string& name) {
+			auto it = uniforms.find(name);
+			if (it == uniforms.end()) {
+				it = uniforms.insert({name, glGetUniformLocation(program, name.c_str())}).first;
+			}
+			return it->second;
 		}
 
 		~ShaderProgram() {
@@ -146,6 +157,17 @@ namespace graphics {
 	void attach_shaders(GLuint program, Shader1&& a, Shader2&& b, Shader_Types&&... s) {
 		glAttachShader(program, a.compile());
 		attach_shaders(program, b, s...);
+	}
+
+	template <class Shader1>
+	void detach_shaders(GLuint program, Shader1&& a) {
+		glDetachShader(program, a.get_gl());
+	}
+
+	template <class Shader1, class Shader2, class... Shader_Types>
+	void detach_shaders(GLuint program, Shader1&& a, Shader2&& b, Shader_Types&&... s) {
+		glDetachShader(program, a.get_gl());
+		detach_shaders(program, b, s...);
 	}
 
 	template <class... Shader_Types,
@@ -198,6 +220,8 @@ namespace graphics {
 
 			throw std::runtime_error(err.str().c_str());
 		}
+
+		detach_shaders(prog.program, s...);
 
 		return std::move(prog);
 	}

@@ -33,14 +33,18 @@ PROGRAM_NAME := RailEditor
 DEBUG_FOLDER := bin_debug
 RELEASE_FOLDER := bin_release
 
+SHADER_SRC := $(wildcard src/RailEditor/graphics/shaders/*.glsl)
+DEBUG_SHADERS   := $(patsubst src/RailEditor/graphics/shaders/%,$(DEBUG_FOLDER)/shaders/%,$(SHADER_SRC))
+RELEASE_SHADERS := $(patsubst src/RailEditor/graphics/shaders/%,$(RELEASE_FOLDER)/shaders/%,$(SHADER_SRC))
+
 .PHONY: debug release clean
 
 debug: $(MODULE_OUTPUT_DEBUG)
-debug: $(DEBUG_FOLDER)/$(PROGRAM_NAME)
+debug: $(DEBUG_FOLDER)/$(PROGRAM_NAME) $(DEBUG_SHADERS)
 
 release: ARGS = $(RELEASE_ARGS)
 release: $(MODULE_OUTPUT_RELEASE)
-release: $(RELEASE_FOLDER)/$(PROGRAM_NAME)
+release: $(RELEASE_FOLDER)/$(PROGRAM_NAME) $(RELEASE_SHADERS)
 
 obj/debug/%.o: src/%.cpp
 	@echo $(COLOR_WHITE)$(CXX)$(COLOR_BLUE) $^$(COLOR_END)
@@ -50,13 +54,21 @@ obj/release/%.o: src/%.cpp
 	@echo $(COLOR_WHITE)$(CXX)$(COLOR_BLUE) $^$(COLOR_END)
 	@$(CXX) $< $(ARG_WARNING) $(ARGS) $(ARG_INCLUDE) -c -o $@
 
-$(DEBUG_FOLDER)/$(PROGRAM_NAME): $(OBJ_LIST_DEBUG) | bin_debug
+$(DEBUG_FOLDER)/$(PROGRAM_NAME): $(OBJ_LIST_DEBUG) | $(DEBUG_FOLDER)
 	@echo $(COLOR_WHITE)Linking$(COLOR_GREEN) $@$(COLOR_END)
 	@$(CXX) $^ $(ARG_WARNING) $(ARGS) $(ARG_LINK) -o $@
 
-$(RELEASE_FOLDER)/$(PROGRAM_NAME): $(OBJ_LIST_RELEASE) | bin_release
+$(RELEASE_FOLDER)/$(PROGRAM_NAME): $(OBJ_LIST_RELEASE) | $(RELEASE_FOLDER)
 	@echo $(COLOR_WHITE)Linking and Optimizing$(COLOR_GREEN) $@$(COLOR_END)
 	@$(CXX) $^ $(ARG_WARNING) $(ARGS) $(ARG_LINK) -o $@
+
+$(DEBUG_FOLDER)/shaders/%.glsl: src/RailEditor/graphics/shaders/%.glsl | $(DEBUG_FOLDER)/shaders
+	@echo $(COLOR_WHITE)Copying shader$(COLOR_YELLOW) $^$(COLOR_END)
+	@cp $^ $@
+
+$(RELEASE_FOLDER)/shaders/%.glsl: src/RailEditor/graphics/shaders/%.glsl | $(RELEASE_FOLDER)/shaders
+	@echo $(COLOR_WHITE)Copying shader$(COLOR_YELLOW) $^$(COLOR_END)
+	@cp $^ $@
 
 define make-obj-dirs
 $1:
@@ -68,7 +80,7 @@ bin_debug bin_release:
 	@echo $(COLOR_WHITE)Making binary directory$(COLOR_CYAN) $@$(COLOR_END)
 	@mkdir -p $@
 
-$(foreach mods,$(MODULE_OUTPUT_DEBUG) $(MODULE_OUTPUT_RELEASE),$(eval $(call make-obj-dirs,$(mods))))
+$(foreach mods,$(MODULE_OUTPUT_DEBUG) $(MODULE_OUTPUT_RELEASE) $(RELEASE_FOLDER)/shaders $(DEBUG_FOLDER)/shaders,$(eval $(call make-obj-dirs,$(mods))))
 
 clean:
 	rm -rf obj bin_debug/ bin_release/

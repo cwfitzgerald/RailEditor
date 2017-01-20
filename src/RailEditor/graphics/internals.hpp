@@ -9,10 +9,16 @@ namespace graphics {
 	struct SDL_Context_t {
 		SDL_Window* window;
 		SDL_GLContext gl_context;
+		std::size_t width, height;
 	};
 
-	extern SDL_Context_t sdl_context;
+	struct OpenGL_Extentions_t {
+		bool tesselation = false;
+	};
+	extern OpenGL_Extentions_t opengl_extentions; // defined in window_management.cpp
 
-	void initialize_sdl(std::size_t width, std::size_t height);
-	void initialize_shaders();
+	extern SDL_Context_t sdl_context; // defined in window_management.cpp
+
+	void initialize_sdl();
+	void initialize_ogl();
 }
