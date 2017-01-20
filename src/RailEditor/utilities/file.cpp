@@ -3,9 +3,9 @@
 #include <fstream>
 #include <iostream>
 
-std::unique_ptr<char[]> utilities::load_file_contents(const char * filename) {
+std::unique_ptr<char[]> utilities::load_file_contents(const char* filename) {
 	std::ifstream ifs(filename, std::ios::binary | std::ios::ate);
-	if(!ifs.is_open()) {
+	if (!ifs.is_open()) {
 		std::cerr << "Cannot open file " << filename << ".\n";
 	}
 
@@ -21,7 +21,7 @@ std::unique_ptr<char[]> utilities::load_file_contents(const char * filename) {
 	return result;
 }
 
-void utilities::save_file_contents(const char * filename, const char * contents, std::size_t size) {
+void utilities::save_file_contents(const char* filename, const char* contents, std::size_t size) {
 	std::ofstream ofs(filename, std::ios::binary | std::ios::out);
 	ofs.write(contents, size);
 }

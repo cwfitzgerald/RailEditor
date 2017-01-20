@@ -5,9 +5,9 @@
 #include <iostream>
 #include <memory>
 #include <sstream>
-#include <unordered_map>
 #include <string>
 #include <type_traits>
+#include <unordered_map>
 
 #include "utilities/meta.hpp"
 
@@ -108,13 +108,14 @@ namespace graphics {
 
 		void clear() {
 			glDeleteShader(compiled);
+			compiled = 0;
 			valid = false;
 		}
 	};
 
 	class ShaderProgram {
 	  private:
-	  	std::unordered_map<std::string, GLuint> uniforms;
+		std::unordered_map<std::string, GLuint> uniforms;
 		GLuint program;
 
 	  public:
@@ -140,8 +141,17 @@ namespace graphics {
 			return it->second;
 		}
 
-		~ShaderProgram() {
+		void use() {
+			glUseProgram(program);
+		}
+
+		void clear() {
 			glDeleteProgram(program);
+			program = 0;
+		}
+
+		~ShaderProgram() {
+			clear();
 		}
 
 		template <class... Shader_Types>
