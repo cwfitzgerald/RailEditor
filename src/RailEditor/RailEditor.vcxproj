@@ -197,6 +197,8 @@ xcopy /Y ..\..\dependencies\lib64\SDL2.dll "$(TargetDir)SDL2.dll*"</Command>
     <ClCompile Include="graphics\window_management.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="utilities\file.cpp" />
+    <ClCompile Include="world\world_gen.cpp" />
+    <ClCompile Include="world\world_render.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

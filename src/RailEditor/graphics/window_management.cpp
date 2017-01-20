@@ -27,7 +27,7 @@ void
 	(void) len;
 	(void) userParam;
 
-	std::cerr << "\n OPENGL CALLBACK #" << error_num << "\n";
+	std::cerr << "\nOPENGL CALLBACK #" << error_num++ << "\n";
 	std::cerr << "message: " << message << '\n';
 	std::cerr << "type: ";
 	switch (type) {
@@ -109,6 +109,8 @@ void graphics::initialize_sdl() {
 	glewInit();
 
 	glViewport(0, 0, GLsizei(sdl_context.width), GLsizei(sdl_context.height));
+
+	SDL_GL_SetSwapInterval(0);
 
 // Register Debug Callback
 #ifdef RAIL_EDITOR_DEBUG

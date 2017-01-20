@@ -14,8 +14,8 @@ COLOR_END     := "\033[0m"
 ARG_WARNING := -Wall -Wextra -Wpedantic
 ARG_INCLUDE := -Idependencies/include -Isrc/RailEditor
 ARG_DEBUG   := -g -O0 -std=c++1z -DRAIL_EDITOR_DEBUG
-ARG_RELEASE := -O3 -flto -fwhole-program -std=c++1z
-ARG_LINK    := -lSDL2 -lGL -lGLEW
+ARG_RELEASE := -Ofast -flto -fuse-linker-plugin -std=c++1z
+ARG_LINK    := -lSDL2 -lGL -lGLEW 
 
 DEBUG_ARGS    = $(ARG_WARNING) $(ARG_DEBUG)
 RELEASE_ARGS  = $(ARG_WARNING) $(ARG_RELEASE)

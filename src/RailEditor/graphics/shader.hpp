@@ -13,39 +13,39 @@
 
 namespace graphics {
 	enum class ShaderType : GLenum {
-		null = 0,
-		vertex = GL_VERTEX_SHADER,
+		null        = 0,
+		vertex      = GL_VERTEX_SHADER,
 		tesscontrol = GL_TESS_CONTROL_SHADER,
-		tesseval = GL_TESS_EVALUATION_SHADER,
-		geometry = GL_GEOMETRY_SHADER,
-		fragment = GL_FRAGMENT_SHADER,
-		compute = GL_COMPUTE_SHADER
+		tesseval    = GL_TESS_EVALUATION_SHADER,
+		geometry    = GL_GEOMETRY_SHADER,
+		fragment    = GL_FRAGMENT_SHADER,
+		compute     = GL_COMPUTE_SHADER
 	};
 
 	template <ShaderType stype = ShaderType::null>
 	class Shader {
-	  private:
+	private:
 		GLuint compiled;
 		std::string src;
 		bool valid;
 
-	  public:
+	public:
 		constexpr static ShaderType type = stype;
 
 		Shader() = default;
 		Shader(const char* src_ptr) : compiled(0), src(src_ptr), valid(false){};
 		Shader(const Shader&) = delete;
 		Shader(Shader&& rhs) {
-			compiled = rhs.compiled;
-			src = std::move(rhs.compiled);
-			valid = rhs.valid;
+			compiled     = rhs.compiled;
+			src          = std::move(rhs.compiled);
+			valid        = rhs.valid;
 			rhs.compiled = 0;
 		};
 		Shader& operator=(const Shader&) = delete;
-		Shader& operator=(Shader&& rhs) {
-			compiled = rhs.compiled;
-			src = std::move(rhs.compiled);
-			valid = rhs.valid;
+		Shader& operator                 =(Shader&& rhs) {
+			compiled     = rhs.compiled;
+			src          = std::move(rhs.compiled);
+			valid        = rhs.valid;
 			rhs.compiled = 0;
 
 			return *this;
@@ -56,7 +56,7 @@ namespace graphics {
 		}
 
 		void set_src(const std::string& isrc) {
-			src = isrc;
+			src   = isrc;
 			valid = false;
 		}
 
@@ -73,7 +73,8 @@ namespace graphics {
 				return compiled;
 			}
 			if (compiled == 0) {
-				compiled = glCreateShader(static_cast<typename std::underlying_type<ShaderType>::type>(type));
+				compiled = glCreateShader(
+				    static_cast<typename std::underlying_type<ShaderType>::type>(type));
 			}
 
 			const char* ptr = src.c_str();
@@ -109,34 +110,37 @@ namespace graphics {
 		void clear() {
 			glDeleteShader(compiled);
 			compiled = 0;
-			valid = false;
+			valid    = false;
 		}
 	};
 
 	class ShaderProgram {
-	  private:
-		std::unordered_map<std::string, GLuint> uniforms;
+	private:
+		std::unordered_map<std::string, GLint> uniforms;
 		GLuint program;
 
-	  public:
+	public:
 		ShaderProgram() : program(0){};
 		ShaderProgram(const ShaderProgram&) = delete;
 		ShaderProgram(ShaderProgram&& rhs) {
-			program = rhs.program;
+			program     = rhs.program;
 			rhs.program = 0;
 		}
 		ShaderProgram& operator=(const ShaderProgram&) = delete;
-		ShaderProgram& operator=(ShaderProgram&& rhs) {
-			program = rhs.program;
+		ShaderProgram& operator                        =(ShaderProgram&& rhs) {
+			program     = rhs.program;
 			rhs.program = 0;
 
 			return *this;
 		}
 
-		GLuint get_uniform(const std::string& name) {
+		GLint get_uniform(const std::string& name) {
 			auto it = uniforms.find(name);
 			if (it == uniforms.end()) {
 				it = uniforms.insert({name, glGetUniformLocation(program, name.c_str())}).first;
+			}
+			if (it->second == -1) {
+				std::cerr << "Uniform \"" << name << "\" not found\n";
 			}
 			return it->second;
 		}
@@ -181,7 +185,8 @@ namespace graphics {
 	}
 
 	template <class... Shader_Types,
-	          typename std::enable_if_t<utilities::has_none<ShaderProgram, Shader_Types...>::value, void>* = nullptr>
+	          typename std::enable_if_t<utilities::has_none<ShaderProgram, Shader_Types...>::value,
+	                                    void>* = nullptr>
 	ShaderProgram create_shader_program(Shader_Types&&... s) {
 		auto prog = ShaderProgram{};
 		return create_shader_program(prog, s...);
@@ -193,12 +198,15 @@ namespace graphics {
 		              "Shader program must have one vertex shader");
 		static_assert(utilities::has_one<Shader<ShaderType::fragment>, Shader_Types...>::value,
 		              "Shader program must have one fragment shader");
-		static_assert(utilities::has_no_more_than_one<Shader<ShaderType::tesscontrol>, Shader_Types...>::value,
+		static_assert(utilities::has_no_more_than_one<Shader<ShaderType::tesscontrol>,
+		                                              Shader_Types...>::value,
 		              "Shader program can't have more than one tesselation control shader");
-		static_assert(utilities::has_no_more_than_one<Shader<ShaderType::tesseval>, Shader_Types...>::value,
-		              "Shader program can't have more than one tesselation evaluation shader");
-		static_assert(utilities::has_no_more_than_one<Shader<ShaderType::geometry>, Shader_Types...>::value,
-		              "Shader program can't have more than one geometry shader");
+		static_assert(
+		    utilities::has_no_more_than_one<Shader<ShaderType::tesseval>, Shader_Types...>::value,
+		    "Shader program can't have more than one tesselation evaluation shader");
+		static_assert(
+		    utilities::has_no_more_than_one<Shader<ShaderType::geometry>, Shader_Types...>::value,
+		    "Shader program can't have more than one geometry shader");
 		static_assert(utilities::has_none<Shader<ShaderType::compute>, Shader_Types...>::value,
 		              "Shading program can't have compute shaders");
 

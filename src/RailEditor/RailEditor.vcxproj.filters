@@ -47,5 +47,11 @@
     <ClCompile Include="graphics\ogl_management.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="world\world_gen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="world\world_render.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

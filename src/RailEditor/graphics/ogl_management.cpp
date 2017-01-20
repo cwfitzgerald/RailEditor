@@ -21,17 +21,23 @@ void graphics::initialize_ogl() {
 
 	opengldata.testshader = create_shader_program(vert, frag);
 	opengldata.testshader.use();
-	auto a = opengldata.testshader.get_uniform("pvm_mat");
+	auto pvm_mat_u = opengldata.testshader.get_uniform("pvm_mat");
+	auto tex_u     = opengldata.testshader.get_uniform("heightmap");
 
 	glm::mat4 transform{};
 	transform = glm::scale(transform, glm::vec3{10, 10, 1});
 	transform = glm::lookAt(glm::vec3{0, 1, 4}, glm::vec3{0, 0, 0}, glm::vec3{0, 1, 0}) * transform;
-	transform =
-	    glm::perspective(glm::radians(80.0f),
-	                     static_cast<float>(sdl_context.width) / static_cast<float>(sdl_context.height), 0.1f, 100.0f) *
-	    transform;
+	transform = glm::perspective(glm::radians(80.0f), static_cast<float>(sdl_context.width) /
+	                                                      static_cast<float>(sdl_context.height),
+	                             0.1f, 100.0f) *
+	            transform;
 
-	glUniformMatrix4fv(a, 1, GL_FALSE, glm::value_ptr(transform));
+	glUniformMatrix4fv(pvm_mat_u, 1, GL_FALSE, glm::value_ptr(transform));
+	glUniform1i(tex_u, 0);
+}
+
+void graphics::render() {
+	SDL_GL_SwapWindow(sdl_context.window);
 }
 
 void graphics::destroy_ogl() {
