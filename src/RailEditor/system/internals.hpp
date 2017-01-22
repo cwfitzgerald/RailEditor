@@ -1,5 +1,7 @@
 #pragma once
 
+#include "system.hpp"
+
 #include <SDL2/SDL.h>
 #include <cstdlib>
 
@@ -12,7 +14,6 @@ namespace resystem {
 
 	extern SDL_Context_t sdl_context; // defined in window_management.cpp
 
-	
 	void initialize_sdl();
 	void destroy_sdl();
 }

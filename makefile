@@ -37,7 +37,7 @@ SHADER_SRC := $(wildcard src/RailEditor/graphics/shaders/*.glsl)
 DEBUG_SHADERS   := $(patsubst src/RailEditor/graphics/shaders/%,$(DEBUG_FOLDER)/shaders/%,$(SHADER_SRC))
 RELEASE_SHADERS := $(patsubst src/RailEditor/graphics/shaders/%,$(RELEASE_FOLDER)/shaders/%,$(SHADER_SRC))
 
-.PHONY: debug release clean
+.PHONY: debug release clean format
 
 debug: $(MODULE_OUTPUT_DEBUG)
 debug: $(DEBUG_FOLDER)/$(PROGRAM_NAME) $(DEBUG_SHADERS)
@@ -45,6 +45,12 @@ debug: $(DEBUG_FOLDER)/$(PROGRAM_NAME) $(DEBUG_SHADERS)
 release: ARGS = $(RELEASE_ARGS)
 release: $(MODULE_OUTPUT_RELEASE)
 release: $(RELEASE_FOLDER)/$(PROGRAM_NAME) $(RELEASE_SHADERS)
+
+format: $(addprefix clangformat/, $(foreach mod,$(MODULE_LIST),$(wildcard src/RailEditor/$(mod)/*.*pp)))
+
+clangformat/%: %
+	@echo $(COLOR_WHITE)clang-format$(COLOR_BLUE) $<$(COLOR_END)
+	@clang-format -i $<
 
 obj/debug/%.o: src/%.cpp
 	@echo $(COLOR_WHITE)$(CXX)$(COLOR_BLUE) $^$(COLOR_END)

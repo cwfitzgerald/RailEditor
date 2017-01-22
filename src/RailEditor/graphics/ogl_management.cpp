@@ -12,7 +12,6 @@
 graphics::OpenGLData_t graphics::opengldata;
 graphics::OpenGL_Extentions_t graphics::opengl_extentions;
 
-
 void graphics::initialize_renderer(std::size_t width, std::size_t height) {
 	resystem::sdl_context.width = width;
 	resystem::sdl_context.height = height;
@@ -47,7 +46,6 @@ void graphics::initialize_ogl() {
 		std::cerr << "\nOpenGL Version: " << version << '\n';
 	}
 
-
 	// Other initalization stuff
 
 	glEnable(GL_DEPTH_TEST);
@@ -64,7 +62,7 @@ void graphics::initialize_ogl() {
 	opengldata.testshader = create_shader_program(vert, frag);
 	opengldata.testshader.use();
 	auto pvm_mat_u = opengldata.testshader.get_uniform("pvm_mat");
-	auto tex_u     = opengldata.testshader.get_uniform("heightmap");
+	auto tex_u = opengldata.testshader.get_uniform("heightmap");
 
 	glm::mat4 transform{};
 	transform = glm::rotate(transform, glm::radians(-90.0f), glm::vec3(1, 0, 0));

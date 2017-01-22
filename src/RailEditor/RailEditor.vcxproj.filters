@@ -36,6 +36,12 @@
     <ClInclude Include="system\internals.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utilities\random.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -54,6 +60,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="system\window_management.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utilities\perlin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\event_processing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

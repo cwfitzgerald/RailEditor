@@ -18,7 +18,7 @@ namespace world {
 	//   :         :
 	// (0,0) ... (1,0)
 	class Heightmap {
-	private:
+	  private:
 		std::vector<float> vals;
 		std::size_t width;
 		std::size_t height;
@@ -26,7 +26,7 @@ namespace world {
 
 		void create_heights(std::size_t seed);
 
-	public:
+	  public:
 		Heightmap() : vals(), width(0), height(0), gl_tex(0){};
 		Heightmap(const Heightmap&) = delete;
 		Heightmap(Heightmap&& rhs) {
@@ -66,21 +66,21 @@ namespace world {
 	};
 
 	class Surface {
-	private:
+	  private:
 		std::vector<graphics::Vertex> vertices;
-		std::vector<GLushort> indices;
+		std::vector<GLuint> indices;
 
 		GLuint vao = 0;
 		GLuint vert_buff = 0, index_buff = 0;
 
-	public:
+	  public:
 		Surface() = default;
 		Surface(const Surface&) = delete;
 		Surface(Surface&& rhs) {
 			*this = std::move(rhs);
 		}
 		Surface& operator=(const Surface&) = delete;
-		Surface& operator=(Surface&& rhs){
+		Surface& operator=(Surface&& rhs) {
 			vertices = std::move(rhs.vertices);
 			indices = std::move(rhs.indices);
 			vao = rhs.vao;

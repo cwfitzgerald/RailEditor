@@ -35,16 +35,20 @@ void world::Surface::upload() {
 	glBindBuffer(GL_ARRAY_BUFFER, vert_buff);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(graphics::Vertex), vertices.data(), GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(graphics::Vertex), (GLvoid*) (0 * sizeof(GLfloat))); // location
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(graphics::Vertex), (GLvoid*) (3 * sizeof(GLfloat))); // normals
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(graphics::Vertex), (GLvoid*) (6 * sizeof(GLfloat))); // texcoords
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(graphics::Vertex),
+	                      (GLvoid*) (0 * sizeof(GLfloat))); // location
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(graphics::Vertex),
+	                      (GLvoid*) (3 * sizeof(GLfloat))); // normals
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(graphics::Vertex),
+	                      (GLvoid*) (6 * sizeof(GLfloat))); // texcoords
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buff);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(decltype(indices)::value_type), indices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(decltype(indices)::value_type), indices.data(),
+	             GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
 
@@ -55,7 +59,7 @@ void world::Surface::upload() {
 void world::Surface::render() {
 	glBindVertexArray(vao);
 
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
 	glBindVertexArray(0);
 }

@@ -102,6 +102,8 @@ void resystem::initialize_sdl() {
 
 	glViewport(0, 0, GLsizei(sdl_context.width), GLsizei(sdl_context.height));
 
+	SDL_SetRelativeMouseMode(SDL_TRUE);
+
 // Register Debug Callback
 #ifdef RAIL_EDITOR_DEBUG
 	if (glDebugMessageCallback) {

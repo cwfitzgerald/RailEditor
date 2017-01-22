@@ -118,6 +118,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <AssemblerOutput>NoListing</AssemblerOutput>
       <UseUnicodeForAssemblerListing>false</UseUnicodeForAssemblerListing>
+      <DisableSpecificWarnings>4267;4244</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -170,7 +171,7 @@ xcopy /Y ..\..\dependencies\lib64\SDL2.dll "$(TargetDir)SDL2.dll*"</Command>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <AssemblerOutput>NoListing</AssemblerOutput>
       <UseUnicodeForAssemblerListing>false</UseUnicodeForAssemblerListing>
-      <DisableSpecificWarnings>4267</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4267;4244</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -197,18 +198,22 @@ xcopy /Y ..\..\dependencies\lib64\SDL2.dll "$(TargetDir)SDL2.dll*"</Command>
     <ClInclude Include="graphics.hpp" />
     <ClInclude Include="graphics\internals.hpp" />
     <ClInclude Include="graphics\shader.hpp" />
+    <ClInclude Include="system.hpp" />
     <ClInclude Include="system\internals.hpp" />
     <ClInclude Include="utilities\file.hpp" />
     <ClInclude Include="utilities\meta.hpp" />
+    <ClInclude Include="utilities\random.hpp" />
     <ClInclude Include="world.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="graphics\ogl_management.cpp" />
+    <ClCompile Include="system\event_processing.cpp" />
     <ClCompile Include="system\window_management.cpp" />
     <ClCompile Include="main.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">SDL_MAIN_HANDLED;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="utilities\file.cpp" />
+    <ClCompile Include="utilities\perlin.cpp" />
     <ClCompile Include="world\world_gen.cpp" />
     <ClCompile Include="world\world_render.cpp" />
   </ItemGroup>
