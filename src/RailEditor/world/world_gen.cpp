@@ -60,10 +60,10 @@ void world::Surface::regenerate(std::size_t width, std::size_t height) {
 			std::size_t base = (y * index_width + x) * 6;
 
 			indices[base + 0] = (y + 0) * width + (x + 0); // T1 : Top left
-			indices[base + 1] = (y + 1) * width + (x + 0); // T1 : Bottom left
-			indices[base + 2] = (y + 0) * width + (x + 1); // T1 : Top right
-			indices[base + 3] = indices[base + 2];         // T2 : Top right
-			indices[base + 4] = indices[base + 1];         // T2 : Bottom left
+			indices[base + 1] = (y + 0) * width + (x + 1); // T1 : Top right
+			indices[base + 2] = (y + 1) * width + (x + 0); // T1 : Bottom left
+			indices[base + 3] = indices[base + 2];         // T2 : Bottom left
+			indices[base + 4] = indices[base + 1];         // T2 : Top right
 			indices[base + 5] = (y + 1) * width + (x + 1); // T2 : Bottom right
 		}
 	}

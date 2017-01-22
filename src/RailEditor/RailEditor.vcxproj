@@ -84,6 +84,10 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\..\bin_release\</OutDir>
     <IntDir>..\..\obj\release\</IntDir>
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -166,6 +170,7 @@ xcopy /Y ..\..\dependencies\lib64\SDL2.dll "$(TargetDir)SDL2.dll*"</Command>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <AssemblerOutput>NoListing</AssemblerOutput>
       <UseUnicodeForAssemblerListing>false</UseUnicodeForAssemblerListing>
+      <DisableSpecificWarnings>4267</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -183,19 +188,26 @@ xcopy /Y ..\..\dependencies\lib64\SDL2.dll "$(TargetDir)SDL2.dll*"</Command>
     <PreBuildEvent>
       <Command>xcopy /Y graphics\shaders "$(TargetDir)shaders" /i /c </Command>
     </PreBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="graphics.hpp" />
     <ClInclude Include="graphics\internals.hpp" />
     <ClInclude Include="graphics\shader.hpp" />
+    <ClInclude Include="system\internals.hpp" />
     <ClInclude Include="utilities\file.hpp" />
     <ClInclude Include="utilities\meta.hpp" />
     <ClInclude Include="world.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="graphics\ogl_management.cpp" />
-    <ClCompile Include="graphics\window_management.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="system\window_management.cpp" />
+    <ClCompile Include="main.cpp">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">SDL_MAIN_HANDLED;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
     <ClCompile Include="utilities\file.cpp" />
     <ClCompile Include="world\world_gen.cpp" />
     <ClCompile Include="world\world_render.cpp" />

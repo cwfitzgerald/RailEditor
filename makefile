@@ -21,7 +21,7 @@ DEBUG_ARGS    = $(ARG_WARNING) $(ARG_DEBUG)
 RELEASE_ARGS  = $(ARG_WARNING) $(ARG_RELEASE)
 ARGS = $(DEBUG_ARGS)
 
-MODULE_LIST   := . graphics utilities world
+MODULE_LIST   := . graphics system utilities world
 MODULE_OUTPUT_DEBUG := $(addprefix obj/debug/RailEditor/, $(MODULE_LIST))
 MODULE_OUTPUT_RELEASE := $(addprefix obj/release/RailEditor/, $(MODULE_LIST))
 SRC_LIST         := $(foreach mod,$(MODULE_LIST),$(wildcard src/RailEditor/$(mod)/*.cpp))

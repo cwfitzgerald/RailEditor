@@ -1,8 +1,9 @@
 #pragma once
 
+#include <GL/glew.h>
+
 #include "graphics.hpp"
 
-#include <GL/glew.h>
 #include <cinttypes>
 #include <cstring>
 #include <vector>

@@ -7,12 +7,12 @@ int main(int, char**) {
 
 	graphics::initialize_renderer(1280, 720);
 	
-	auto surf = world::Surface(3, 3);
+	auto surf = world::Surface(100, 100);
 	surf.upload();
 	auto hm = world::Heightmap(50, 50);
 	hm.upload();
 
-	for (std::size_t frames = 0; frames < 10000; ++frames){
+	for (std::size_t frames = 0; frames < 500; ++frames){
 		glClearColor(0.5, 0.5, 0.5, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	

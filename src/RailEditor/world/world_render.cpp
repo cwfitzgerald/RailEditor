@@ -6,7 +6,7 @@ void world::Heightmap::upload() {
 	}
 
 	glBindTexture(GL_TEXTURE_2D, gl_tex);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RED, GL_FLOAT, vals.data());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, width, height, 0, GL_RED, GL_FLOAT, vals.data());
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -47,14 +47,15 @@ void world::Surface::upload() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(decltype(indices)::value_type), indices.data(), GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void world::Surface::render() {
 	glBindVertexArray(vao);
-	glBindBuffer(GL_ARRAY_BUFFER, vert_buff);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buff);
 
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, nullptr);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0);
 
 	glBindVertexArray(0);
 }

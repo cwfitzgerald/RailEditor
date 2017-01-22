@@ -10,6 +10,8 @@ uniform mat4 pvm_mat;
 uniform sampler2D heightmap;
 
 void main() {
+	// vTexCoords = texcoord;
+	// gl_Position = pvm_mat * vec4(position, 1.0);
 	vTexCoords = texcoord;
-	gl_Position = pvm_mat * vec4(vec3(0, texture(heightmap, texcoord).r, 0) + position, 1.0);
+	gl_Position = pvm_mat * vec4(vec3(0, 0, texture(heightmap, texcoord).r * 2) + position, 1.0);
 }
