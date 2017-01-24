@@ -18,7 +18,7 @@ void world::Heightmap::create_heights(std::size_t seed) {
 		double y_ratio = static_cast<double>(y) / height * 10.0f;
 		for (std::size_t x = 0; x < width; ++x) {
 			double x_ratio = static_cast<double>(x) / height * 10.0f;
-			vals[offset + x] = utilties::perlin_noise(x_ratio, y_ratio, real_seed);
+			vals[offset + x] = utilities::perlin_noise(x_ratio, y_ratio, real_seed);
 		}
 
 		offset -= width;
@@ -26,12 +26,13 @@ void world::Heightmap::create_heights(std::size_t seed) {
 
 	// Code for nice mountain
 	// for (std::size_t y = 0, base = (height - 1) * width; y < height; ++y, base -= width) {
-	//	float yfactor = std::sin(static_cast<float>(y) * static_cast<float>(M_PI / height));
-	//	for (std::size_t x = 0; x < width; ++x) {
-	//		float xfactor  = std::sin(static_cast<float>(x) * static_cast<float>(M_PI / width));
-	//		vals[base + x] = xfactor * yfactor;
-	//	}
-	//}
+	// 	float yfactor = std::sin(static_cast<float>(y) * static_cast<float>(M_PI / height) * 2);
+	// 	for (std::size_t x = 0; x < width; ++x) {
+	// 		float xfactor = std::sin(static_cast<float>(x) * static_cast<float>(M_PI / width) *
+	// 0.5);
+	// 		vals[base + x] = xfactor * yfactor;
+	// 	}
+	// }
 }
 
 void world::Surface::regenerate(std::size_t width, std::size_t height) {

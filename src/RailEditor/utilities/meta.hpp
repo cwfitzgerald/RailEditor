@@ -26,21 +26,24 @@ namespace utilities {
 	template <class A, class... Types>
 	struct has_one {
 		constexpr static bool value =
-		    true_count<std::is_same<typename std::remove_reference<A>::type,
-		                            typename std::remove_reference<Types>::type>::value...>::value == 1;
+		    true_count<
+		        std::is_same<typename std::remove_reference<A>::type,
+		                     typename std::remove_reference<Types>::type>::value...>::value == 1;
 	};
 
 	template <class A, class... Types>
 	struct has_no_more_than_one {
 		constexpr static bool value =
-		    true_count<std::is_same<typename std::remove_reference<A>::type,
-		                            typename std::remove_reference<Types>::type>::value...>::value <= 1;
+		    true_count<
+		        std::is_same<typename std::remove_reference<A>::type,
+		                     typename std::remove_reference<Types>::type>::value...>::value <= 1;
 	};
 
 	template <class A, class... Types>
 	struct has_none {
 		constexpr static bool value =
-		    true_count<std::is_same<typename std::remove_reference<A>::type,
-		                            typename std::remove_reference<Types>::type>::value...>::value == 0;
+		    true_count<
+		        std::is_same<typename std::remove_reference<A>::type,
+		                     typename std::remove_reference<Types>::type>::value...>::value == 0;
 	};
 }

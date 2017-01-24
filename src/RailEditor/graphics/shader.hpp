@@ -73,7 +73,8 @@ namespace graphics {
 				return compiled;
 			}
 			if (compiled == 0) {
-				compiled = glCreateShader(static_cast<typename std::underlying_type<ShaderType>::type>(type));
+				compiled = glCreateShader(
+				    static_cast<typename std::underlying_type<ShaderType>::type>(type));
 			}
 
 			const char* ptr = src.c_str();
@@ -184,7 +185,8 @@ namespace graphics {
 	}
 
 	template <class... Shader_Types,
-	          typename std::enable_if_t<utilities::has_none<ShaderProgram, Shader_Types...>::value, void>* = nullptr>
+	          typename std::enable_if_t<utilities::has_none<ShaderProgram, Shader_Types...>::value,
+	                                    void>* = nullptr>
 	ShaderProgram create_shader_program(Shader_Types&&... s) {
 		auto prog = ShaderProgram{};
 		return create_shader_program(prog, s...);
@@ -196,12 +198,15 @@ namespace graphics {
 		              "Shader program must have one vertex shader");
 		static_assert(utilities::has_one<Shader<ShaderType::fragment>, Shader_Types...>::value,
 		              "Shader program must have one fragment shader");
-		static_assert(utilities::has_no_more_than_one<Shader<ShaderType::tesscontrol>, Shader_Types...>::value,
+		static_assert(utilities::has_no_more_than_one<Shader<ShaderType::tesscontrol>,
+		                                              Shader_Types...>::value,
 		              "Shader program can't have more than one tesselation control shader");
-		static_assert(utilities::has_no_more_than_one<Shader<ShaderType::tesseval>, Shader_Types...>::value,
-		              "Shader program can't have more than one tesselation evaluation shader");
-		static_assert(utilities::has_no_more_than_one<Shader<ShaderType::geometry>, Shader_Types...>::value,
-		              "Shader program can't have more than one geometry shader");
+		static_assert(
+		    utilities::has_no_more_than_one<Shader<ShaderType::tesseval>, Shader_Types...>::value,
+		    "Shader program can't have more than one tesselation evaluation shader");
+		static_assert(
+		    utilities::has_no_more_than_one<Shader<ShaderType::geometry>, Shader_Types...>::value,
+		    "Shader program can't have more than one geometry shader");
 		static_assert(utilities::has_none<Shader<ShaderType::compute>, Shader_Types...>::value,
 		              "Shading program can't have compute shaders");
 

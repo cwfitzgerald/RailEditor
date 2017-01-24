@@ -119,6 +119,7 @@
       <AssemblerOutput>NoListing</AssemblerOutput>
       <UseUnicodeForAssemblerListing>false</UseUnicodeForAssemblerListing>
       <DisableSpecificWarnings>4267;4244</DisableSpecificWarnings>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -172,6 +173,7 @@ xcopy /Y ..\..\dependencies\lib64\SDL2.dll "$(TargetDir)SDL2.dll*"</Command>
       <AssemblerOutput>NoListing</AssemblerOutput>
       <UseUnicodeForAssemblerListing>false</UseUnicodeForAssemblerListing>
       <DisableSpecificWarnings>4267;4244</DisableSpecificWarnings>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -201,6 +203,7 @@ xcopy /Y ..\..\dependencies\lib64\SDL2.dll "$(TargetDir)SDL2.dll*"</Command>
     <ClInclude Include="system.hpp" />
     <ClInclude Include="system\internals.hpp" />
     <ClInclude Include="utilities\file.hpp" />
+    <ClInclude Include="utilities\math.hpp" />
     <ClInclude Include="utilities\meta.hpp" />
     <ClInclude Include="utilities\random.hpp" />
     <ClInclude Include="world.hpp" />
@@ -214,6 +217,7 @@ xcopy /Y ..\..\dependencies\lib64\SDL2.dll "$(TargetDir)SDL2.dll*"</Command>
     </ClCompile>
     <ClCompile Include="utilities\file.cpp" />
     <ClCompile Include="utilities\perlin.cpp" />
+    <ClCompile Include="world\camera.cpp" />
     <ClCompile Include="world\world_gen.cpp" />
     <ClCompile Include="world\world_render.cpp" />
   </ItemGroup>

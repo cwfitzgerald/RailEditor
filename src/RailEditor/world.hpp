@@ -1,8 +1,9 @@
 #pragma once
 
-#include <GL/glew.h>
-
 #include "graphics.hpp"
+
+#include <GL/glew.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <cinttypes>
 #include <cstring>
@@ -51,6 +52,8 @@ namespace world {
 		    : vals(width * height, 0.0f), width(width), height(height), gl_tex(0) {
 			create_heights(seed);
 		}
+
+		float get_value(float x, float y);
 
 		void regenerate(std::size_t width, std::size_t height, std::size_t seed = 0ULL) {
 			vals.resize(width * height, 0.0f);
@@ -107,5 +110,54 @@ namespace world {
 		void regenerate(std::size_t width, std::size_t height);
 		void upload();
 		void render();
+	};
+
+	class Camera {
+	  private:
+		Heightmap& hm;
+		glm::mat4 mat;
+		glm::vec3 focus_point;
+		glm::vec3 cam_point;
+		float direction;
+		float angle;
+		float distance;
+		bool ready;
+
+		float get_hightmap_value(float x, float z);
+
+		void update_position();
+		void update_matrix();
+
+	  public:
+		Camera(Heightmap& hm)
+		    : hm(hm),
+		      mat{},
+		      focus_point{0, 0, 0},
+		      cam_point{0, 0, 0},
+		      direction{0},
+		      angle{-30},
+		      distance{2},
+		      ready{false} {
+			update_position();
+		};
+		Camera(const Camera&) = default;
+		Camera(Camera&&) = default;
+		Camera& operator=(const Camera&) = default;
+		Camera& operator=(Camera&&) = default;
+
+		void slide(float forward, float right);
+		void rotate(float up, float right);
+		void zoom(float in);
+
+		glm::mat4 matrix() {
+			if (!ready) {
+				update_matrix();
+			}
+			return mat;
+		}
+
+		float* matrix_ptr() {
+			return glm::value_ptr(mat);
+		}
 	};
 }

@@ -18,8 +18,8 @@ void __stdcall
 #else
 void
 #endif
-    ogl_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei len, const GLchar* message,
-                 const void* userParam) {
+    ogl_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei len,
+                 const GLchar* message, const void* userParam) {
 	static std::size_t error_num = 0;
 
 	(void) source;
@@ -76,8 +76,9 @@ void resystem::initialize_sdl() {
 		throw std::runtime_error(error.str().c_str());
 	}
 
-	sdl_context.window = SDL_CreateWindow("RailEditor", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-	                                      int(sdl_context.width), int(sdl_context.height), SDL_WINDOW_OPENGL);
+	sdl_context.window =
+	    SDL_CreateWindow("RailEditor", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+	                     int(sdl_context.width), int(sdl_context.height), SDL_WINDOW_OPENGL);
 
 	if (!sdl_context.window) {
 		std::ostringstream error;
@@ -123,4 +124,12 @@ void resystem::destroy_sdl() {
 	SDL_GL_DeleteContext(sdl_context.gl_context);
 	SDL_DestroyWindow(sdl_context.window);
 	SDL_Quit();
+}
+
+void resystem::grab_mouse() {
+	SDL_SetRelativeMouseMode(SDL_TRUE);
+}
+
+void resystem::release_mouse() {
+	SDL_SetRelativeMouseMode(SDL_FALSE);
 }

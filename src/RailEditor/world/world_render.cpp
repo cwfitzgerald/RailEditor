@@ -1,4 +1,20 @@
 #include "world.hpp"
+#include "utilities/math.hpp"
+
+#include <algorithm>
+
+float world::Heightmap::get_value(float x, float y) {
+	float scaled_x = x * width;
+	float scaled_y = y * height;
+
+	scaled_x = utilities::clamp(scaled_x, 0, width - 1);
+	scaled_y = utilities::clamp(scaled_y, 0, height - 1);
+
+	auto index_x = static_cast<std::size_t>(std::floor(scaled_x));
+	auto index_y = static_cast<std::size_t>(std::floor(scaled_y));
+
+	return std::max(vals[index_y * width + index_x], 0.0f);
+}
 
 void world::Heightmap::upload() {
 	if (gl_tex == 0) {
@@ -33,7 +49,8 @@ void world::Surface::upload() {
 
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vert_buff);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(graphics::Vertex), vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(graphics::Vertex), vertices.data(),
+	             GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(graphics::Vertex),
 	                      (GLvoid*) (0 * sizeof(GLfloat))); // location
@@ -47,8 +64,8 @@ void world::Surface::upload() {
 	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buff);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(decltype(indices)::value_type), indices.data(),
-	             GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(decltype(indices)::value_type),
+	             indices.data(), GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
 

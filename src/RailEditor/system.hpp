@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SDL2/sdl.h>
+#include <SDL2/SDL.h>
 
 #include <algorithm>
 #include <unordered_map>
@@ -11,12 +11,15 @@ namespace resystem {
 		bool keypressed = false;
 		bool resize = false;
 		bool quit = false;
+		bool mouseLeftDown = false;
+		bool mouseRightDown = false;
 		int resize_width = 0;
 		int resize_height = 0;
 		float mouseX = 0;
 		float mouseY = 0;
 		float mouse_delta_x = 0;
 		float mouse_delta_y = 0;
+		float mouse_scroll = 0;
 		float time_elapsed = 0;
 	};
 
@@ -39,7 +42,7 @@ namespace resystem {
 	  public:
 		bool pressed(SDL_Keycode k) {
 			auto it = std::lower_bound(keys.begin(), keys.end(), k);
-			return it != keys.end();
+			return it != keys.end() ? *it == k : false;
 		}
 
 		friend EventTypes_t process_events();
@@ -49,4 +52,6 @@ namespace resystem {
 	extern KeysPressed_t keypressed;                      // defined in event_processing.cpp
 
 	EventTypes_t process_events();
+	void release_mouse();
+	void grab_mouse();
 }

@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <algorithm>
+#include <type_traits>
 #include <vector>
 
 graphics::OpenGLData_t graphics::opengldata;
@@ -30,8 +31,9 @@ void graphics::initialize_ogl() {
 		extentions.push_back(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
 	}
 
-	auto tess_it = std::find_if(extentions.begin(), extentions.end(),
-	                            [](const char* val) { return std::strcmp(val, "GL_ARB_tessellation_shader"); });
+	auto tess_it = std::find_if(extentions.begin(), extentions.end(), [](const char* val) {
+		return std::strcmp(val, "GL_ARB_tessellation_shader");
+	});
 	if (tess_it != extentions.end()) {
 		opengl_extentions.tesselation = true;
 	}
@@ -61,20 +63,148 @@ void graphics::initialize_ogl() {
 
 	opengldata.testshader = create_shader_program(vert, frag);
 	opengldata.testshader.use();
-	auto pvm_mat_u = opengldata.testshader.get_uniform("pvm_mat");
+	auto m_mat_u = opengldata.testshader.get_uniform("m_mat");
+	// auto v_mat_u = opengldata.testshader.get_uniform("v_mat");
+	auto p_mat_u = opengldata.testshader.get_uniform("p_mat");
 	auto tex_u = opengldata.testshader.get_uniform("heightmap");
 
-	glm::mat4 transform{};
-	transform = glm::rotate(transform, glm::radians(-90.0f), glm::vec3(1, 0, 0));
-	transform = glm::scale(transform, glm::vec3{1, 1, 1});
-	transform = glm::lookAt(glm::vec3{2, 1, 3}, glm::vec3{0, 0, 0}, glm::vec3{0, 1, 0}) * transform;
-	transform = glm::perspective(glm::radians(80.0f), static_cast<float>(resystem::sdl_context.width) /
-	                                                      static_cast<float>(resystem::sdl_context.height),
-	                             0.1f, 100.0f) *
-	            transform;
+	glm::mat4 model{};
+	glm::mat4 perspective{};
+	model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1, 0, 0));
+	model = glm::scale(model, glm::vec3{10, 10, 1});
+	perspective =
+	    glm::perspective(glm::radians(80.0f), static_cast<float>(resystem::sdl_context.width) /
+	                                              static_cast<float>(resystem::sdl_context.height),
+	                     0.1f, 100.0f);
 
-	glUniformMatrix4fv(pvm_mat_u, 1, GL_FALSE, glm::value_ptr(transform));
+	glUniformMatrix4fv(m_mat_u, 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(p_mat_u, 1, GL_FALSE, glm::value_ptr(perspective));
 	glUniform1i(tex_u, 0);
+
+	create_framebuffers();
+	destroy_framebuffers();
+}
+
+void graphics::set_camera_mat(const glm::mat4& mat) {
+	auto v_mat_u = opengldata.testshader.get_uniform("v_mat");
+	opengldata.testshader.use();
+	glUniformMatrix4fv(v_mat_u, 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+void graphics::resize(std::size_t width, std::size_t height) {
+	resystem::sdl_context.width = width;
+	resystem::sdl_context.height = height;
+
+	destroy_framebuffers();
+	create_framebuffers();
+
+	glViewport(0, 0, width, height);
+}
+
+void graphics::check_framebuffer() {
+	auto fberr = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (fberr != GL_FRAMEBUFFER_COMPLETE) {
+		std::cerr << "Framebuffer not complete!\n";
+		switch (fberr) {
+			case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+				std::cerr << "Framebuffer incomplete attachment\n";
+				break;
+			case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
+				std::cerr << "Framebuffer incomplete dimentions\n";
+				break;
+			case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+				std::cerr << "Framebuffer missing attachment\n";
+				break;
+			case GL_FRAMEBUFFER_UNSUPPORTED:
+				std::cerr << "Framebuffer unsupported\n";
+				break;
+		}
+		throw std::runtime_error("Framebuffer incomplete");
+	}
+}
+
+void graphics::create_framebuffers() {
+	glGenFramebuffers(std::extent<decltype(opengldata.framebuffers.array)>::value,
+	                  opengldata.framebuffers.array);
+	glGenTextures(std::extent<decltype(opengldata.textures.array)>::value,
+	              opengldata.textures.array);
+
+	float x = resystem::sdl_context.width;
+	float y = resystem::sdl_context.height;
+
+	// Deal with gBuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, opengldata.framebuffers.gBuffer);
+
+	// gBuffer - Diffuse Color and Specular Intensity
+	glBindTexture(GL_TEXTURE_2D, opengldata.textures.gBufferDiffuseSpec);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+	                       opengldata.textures.gBufferDiffuseSpec, 0);
+
+	// gBuffer - Normals
+	glBindTexture(GL_TEXTURE_2D, opengldata.textures.gBufferNormal);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, x, y, 0, GL_RGB, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D,
+	                       opengldata.textures.gBufferNormal, 0);
+
+	// gBuffer - Depth
+	glBindTexture(GL_TEXTURE_2D, opengldata.textures.gBufferDepth);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH32F_STENCIL8, x, y, 0, GL_DEPTH_STENCIL,
+	             GL_FLOAT_32_UNSIGNED_INT_24_8_REV, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+	                       opengldata.textures.gBufferDepth, 0);
+
+	constexpr GLenum attachments[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+	glDrawBuffers(std::extent<decltype(attachments)>::value, attachments);
+
+	check_framebuffer();
+
+	// Deal with lBuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, opengldata.framebuffers.lBuffer);
+
+	// lBuffer - Color
+	glBindTexture(GL_TEXTURE_2D, opengldata.textures.lBufferColor);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, x, y, 0, GL_RGB, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+	                       opengldata.textures.lBufferColor, 0);
+
+	// lBuffer - Depth
+	glBindTexture(GL_TEXTURE_2D, opengldata.textures.lBufferDepth);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH32F_STENCIL8, x, y, 0, GL_DEPTH_STENCIL,
+	             GL_FLOAT_32_UNSIGNED_INT_24_8_REV, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+	                       opengldata.textures.lBufferDepth, 0);
+
+	check_framebuffer();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void graphics::destroy_framebuffers() {
+	glDeleteTextures(std::extent<decltype(opengldata.textures), 0>::value,
+	                 opengldata.textures.array);
+	glDeleteFramebuffers(std::extent<decltype(opengldata.framebuffers), 0>::value,
+	                     opengldata.framebuffers.array);
 }
 
 void graphics::render() {

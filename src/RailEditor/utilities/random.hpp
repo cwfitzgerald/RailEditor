@@ -1,5 +1,5 @@
 #pragma once
 
-namespace utilties {
+namespace utilities {
 	double perlin_noise(double x, double y, double z);
 }

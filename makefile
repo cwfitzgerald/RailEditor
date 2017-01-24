@@ -11,11 +11,11 @@ COLOR_CYAN    := "\033[1;36m"
 COLOR_WHITE   := "\033[1;37m"
 COLOR_END     := "\033[0m"
 
-ARG_WARNING := -Wall -Wextra -Wpedantic
+ARG_WARNING := -Wall -Wextra 
 ARG_INCLUDE := -Idependencies/include -Isrc/RailEditor
-ARG_DEBUG   := -g -O0 -std=c++1z -DRAIL_EDITOR_DEBUG
+ARG_DEBUG   := -g -O0 -std=c++1z -DRAIL_EDITOR_DEBUG 
 ARG_RELEASE := -Ofast -flto -fuse-linker-plugin -std=c++1z
-ARG_LINK    := -lSDL2 -lGL -lGLEW 
+ARG_LINK    := -lSDL2 -lGL -lGLEW
 
 DEBUG_ARGS    = $(ARG_WARNING) $(ARG_DEBUG)
 RELEASE_ARGS  = $(ARG_WARNING) $(ARG_RELEASE)
@@ -37,7 +37,7 @@ SHADER_SRC := $(wildcard src/RailEditor/graphics/shaders/*.glsl)
 DEBUG_SHADERS   := $(patsubst src/RailEditor/graphics/shaders/%,$(DEBUG_FOLDER)/shaders/%,$(SHADER_SRC))
 RELEASE_SHADERS := $(patsubst src/RailEditor/graphics/shaders/%,$(RELEASE_FOLDER)/shaders/%,$(SHADER_SRC))
 
-.PHONY: debug release clean format
+.PHONY: debug release clean format loc
 
 debug: $(MODULE_OUTPUT_DEBUG)
 debug: $(DEBUG_FOLDER)/$(PROGRAM_NAME) $(DEBUG_SHADERS)
@@ -45,6 +45,9 @@ debug: $(DEBUG_FOLDER)/$(PROGRAM_NAME) $(DEBUG_SHADERS)
 release: ARGS = $(RELEASE_ARGS)
 release: $(MODULE_OUTPUT_RELEASE)
 release: $(RELEASE_FOLDER)/$(PROGRAM_NAME) $(RELEASE_SHADERS)
+
+loc:
+	@find src/RailEditor/ | awk "/\.hpp/ || /\.cpp/ || /\.glsl/" | xargs wc -l | sort -r -n -k1
 
 format: $(addprefix clangformat/, $(foreach mod,$(MODULE_LIST),$(wildcard src/RailEditor/$(mod)/*.*pp)))
 

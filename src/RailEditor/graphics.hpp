@@ -8,6 +8,7 @@
 namespace graphics {
 	void initialize_renderer(std::size_t width, std::size_t height);
 	void resize(std::size_t width, std::size_t height);
+	void set_camera_mat(const glm::mat4& mat);
 	void render();
 	void destroy_renderer();
 
