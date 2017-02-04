@@ -7,7 +7,10 @@ namespace utilities {
 	}
 
 	inline float lerp(float a0, float a1, float x) {
-		return a0 + x * (a0 - a1);
+		float a = (1 - x) * a0;
+		float b = x * a1;
+		float res = a + b;
+		return res;
 	}
 
 	inline float lerp2d(float x, float y, float a0, float a1, float b0, float b1) {

@@ -11,7 +11,7 @@ float world::Camera::get_hightmap_value(float x, float z) {
 // std::cerr << "(x, z): (" << x << ", " << z << ") -> "
 //           << "(" << (x / 20.0) + 0.5 << ", " << 1.0 - ((z / 20.0) + 0.5) << ")\n";
 #endif
-	return hm.get_value((x / 20.0) + 0.5, 1.0 - ((z / 20.0) + 0.5)) * 2;
+	return hm.get_value((x / 20.0f) + 0.5f, 1.0f - ((z / 20.0f) + 0.5f)) * 2.0f;
 }
 
 void world::Camera::update_position() {

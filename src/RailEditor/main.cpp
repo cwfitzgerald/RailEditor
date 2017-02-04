@@ -8,9 +8,9 @@ int main(int, char**) {
 
 	graphics::initialize_renderer(1280, 720);
 
-	auto surf = world::Surface(100, 100);
+	auto surf = world::Surface(400, 400);
 	surf.upload();
-	auto hm = world::Heightmap(500, 500);
+	auto hm = world::Heightmap(50, 50);
 	hm.upload();
 	auto camera = world::Camera(hm);
 
@@ -51,8 +51,7 @@ int main(int, char**) {
 			}
 		}
 
-		glClearColor(0.5, 0.5, 0.5, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		graphics::prepare();
 
 		graphics::set_camera_mat(camera.matrix());
 

@@ -7,13 +7,22 @@ float world::Heightmap::get_value(float x, float y) {
 	float scaled_x = x * width;
 	float scaled_y = y * height;
 
-	scaled_x = utilities::clamp(scaled_x, 0, width - 1);
-	scaled_y = utilities::clamp(scaled_y, 0, height - 1);
+	scaled_x = utilities::clamp(scaled_x, 0.0f, width - 2);
+	scaled_y = utilities::clamp(scaled_y, 0.0f, height - 2);
 
-	auto index_x = static_cast<std::size_t>(std::floor(scaled_x));
-	auto index_y = static_cast<std::size_t>(std::floor(scaled_y));
+	auto index_x1 = static_cast<std::size_t>(std::floor(scaled_x));
+	auto index_y1 = static_cast<std::size_t>(std::floor(scaled_y));
+	auto index_x2 = static_cast<std::size_t>(std::floor(scaled_x) + 1);
+	auto index_y2 = static_cast<std::size_t>(std::floor(scaled_y) + 1);
 
-	return std::max(vals[index_y * width + index_x], 0.0f);
+	auto val00 = vals[index_y1 * width + index_x1];
+	auto val01 = vals[index_y2 * width + index_x1];
+	auto val10 = vals[index_y1 * width + index_x2];
+	auto val11 = vals[index_y2 * width + index_x2];
+
+	return std::max(utilities::lerp2d(scaled_x - std::floor(scaled_x),
+	                                  scaled_y - std::floor(scaled_y), val00, val10, val01, val11),
+	                0.0f);
 }
 
 void world::Heightmap::upload() {
